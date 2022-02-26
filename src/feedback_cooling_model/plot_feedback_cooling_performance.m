@@ -7,8 +7,8 @@
 %  work, and efficiency
 %
 % author:  JEhrich
-% version: 0.0 (2022-02-25)
-% changes: -
+% version: 1.1 (2022-02-25)
+% changes: added labels (a), (b),...
 clear
 close all
 clc
@@ -42,20 +42,21 @@ end
 
 %% plot output work
 colors = hsv(length(ts_vec));
+lStyle{1} = '-';
+lStyle{2} = '-.';
+lStyle{3} = '--';
 figure('Position',[400,1000,560,900]);
 ax1 = axes('Position',[0.13 0.77 0.77 0.2]);
 for ii = 1:length(ts_vec)
-    semilogx(nan,nan,'Color',colors(ii,:),'linewidth',lW);
+    semilogx(nan,nan,'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
     hold on;
 end
 semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,W_fb(ii,:)/ts_vec(ii),'Color',colors(ii,:),'linewidth',lW);
+    semilogx(s2_vec,W_fb(ii,:)/ts_vec(ii),'LineStyle',lStyle{ii},'Color',colors(ii,:),'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-% xlabel('$\sigma^2$','Interpreter','latex');
-% ylabel('$\left\langle \delta w_\mathrm{fb}\right\rangle/t_s$','Interpreter','latex')
 title('feedback work $\left\langle \delta w_\mathrm{fb}\right\rangle/t_s$','FontWeight','normal','Interpreter','latex');
 lgd = legend({...
     ['$' num2str(ts_vec(1)) '$'],...
@@ -66,83 +67,48 @@ lgd.Title.String = '$t_s$';
 lgd.FontSize = fS;
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,-1.3,2.5]);
+text(4E-3,2.5,'(a)','interpreter','latex','FontSize',fS+2);
 
 %% plot input work
 ax2 = axes('Position',[0.13 0.53 0.77 0.2]);
-for ii = 1:length(ts_vec)
-    semilogx(nan,nan,'Color',colors(ii,:),'linewidth',lW);
-    hold on;
-end
 semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
+hold on;
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,I_np_Z(ii,:)/ts_vec(ii),'Color',colors(ii,:),'linewidth',lW);
+    semilogx(s2_vec,I_np_Z(ii,:)/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-% xlabel('$\sigma^2$','Interpreter','latex');
-% ylabel('$\lim\limits_{k \to \infty} \delta I^\mathrm{nonpred}_Z(k)/t_s$','Interpreter','latex')
 title('control work $\lim_{k \to \infty} \delta I^\mathrm{nonpred}_Z(k)/t_s$','FontWeight','normal','Interpreter','latex');
-% lgd = legend({...
-%     ['$' num2str(ts_vec(1)) '$'],...
-%     ['$' num2str(ts_vec(2)) '$'],...
-%     ['$' num2str(ts_vec(3)) '$']},'Location','NorthWest');
-% legend boxoff 
-% lgd.Title.String = '$t_s$';
-% lgd.FontSize = fS;
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,-1.3,6.4]);
+text(4E-3,6.4,'(b)','interpreter','latex','FontSize',fS+2);
 
 %% plot total work
 ax3 = axes('Position',[0.13 0.29 0.77 0.2]);
-for ii = 1:length(ts_vec)
-    semilogx(nan,nan,'Color',colors(ii,:),'linewidth',lW);
-    hold on;
-end
-% semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
 semilogx([1,1],[-10,100],'--','color',[1,1,1]*0.5,'linewidth',1);
+hold on;
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,(W_fb(ii,:)+I_np_Z(ii,:))/ts_vec(ii),'Color',colors(ii,:),'linewidth',lW);
+    semilogx(s2_vec,(W_fb(ii,:)+I_np_Z(ii,:))/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-% xlabel('$\sigma^2$','Interpreter','latex');
-% ylabel('$\lim\limits_{k \to \infty} \left[\left\langle \delta w_\mathrm{fb}\right\rangle +\delta I^\mathrm{nonpred}_Z(k)\right]/t_s$','Interpreter','latex')
 title('total work','FontWeight','normal','Interpreter','latex');
-% lgd = legend({...
-%     ['$' num2str(ts_vec(1)) '$'],...
-%     ['$' num2str(ts_vec(2)) '$'],...
-%     ['$' num2str(ts_vec(3)) '$']},'Location','NorthWest');
-% legend boxoff 
-% lgd.Title.String = '$t_s$';
-% lgd.FontSize = fS;
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,0,8]);
-
-
+text(4E-3,8,'(c)','interpreter','latex','FontSize',fS+2);
 
 
 %% plot efficiency
 ax4 = axes('Position',[0.13 0.05 0.77 0.2]);
-for ii = 1:length(ts_vec)
-    semilogx(nan,nan,'Color',colors(ii,:),'linewidth',lW);
-    hold on;
-end
-semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
+hold on;
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,-W_fb(ii,:)./I_np_Z(ii,:),'Color',colors(ii,:),'linewidth',lW);
+    semilogx(s2_vec,-W_fb(ii,:)./I_np_Z(ii,:),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW,'MarkerSize',mS);
 end
 set(gca,'FontSize',fS);
 xlabel('$\sigma^2$','Interpreter','latex');
-% ylabel('$\lim\limits_{k \to \infty} \left\langle \delta w_\mathrm{fb}\right\rangle/\delta I^\mathrm{nonpred}_Z(k)$','Interpreter','latex')
-title('efficiency $\eta = -\lim_{k \to \infty} \left\langle \delta w_\mathrm{fb}\right\rangle/\delta I^\mathrm{nonpred}_Z(k)$','FontWeight','normal','Interpreter','latex');
-% lgd = legend({...
-%     ['$' num2str(ts_vec(1)) '$'],...
-%     ['$' num2str(ts_vec(2)) '$'],...
-%     ['$' num2str(ts_vec(3)) '$']},'Location','NorthWest');
-% legend boxoff 
-% lgd.Title.String = '$t_s$';
-% lgd.FontSize = fS;
+title('efficiency $\eta_\mathrm{inf} = -\lim_{k \to \infty} \left\langle \delta w_\mathrm{fb}\right\rangle/\delta I^\mathrm{nonpred}_Z(k)$','FontWeight','normal','Interpreter','latex');
 axis([1E-2,1E1,0,1]);
+text(4E-3,1,'(d)','interpreter','latex','FontSize',fS+2);
 
 %% export
 saveas(gcf, '../../doc/feedback_cooling_performance.eps','epsc')

@@ -6,8 +6,8 @@
 %  outputs eps figure of example trajectories with insets
 %
 % author:  JEhrich
-% version: 1.0 (2022-02-22)
-% changes: changed order of feedback and potential label, re-named V V_r
+% version: 1.1 (2022-02-25)
+% changes: increased width of panel
 clear
 close all
 clc
@@ -89,7 +89,7 @@ end
 inset1 = [3*ts-2*tau,3*ts+1*tau,-0.42,0.4];
 
 figure('Position',[1000,1000,560,420]);
-%axes('Position',[.05 .07 .9 .88])
+axes('Position',[0.09 .14 .85 .82])
 plot(nan,nan,'r','LineWidth',lW,'MarkerSize',mS);
 hold on;
 plot(nan,nan,'b','LineWidth',lW,'MarkerSize',mS);
@@ -115,20 +115,6 @@ set(gca,'XTick',(0:4)*ts,...
 ylabel('state','interpreter','latex');
 xlabel('time','interpreter','latex');
 
-% % axes tick labels
-% text(0,-1,'$0$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(ts-tau-0.015,-1,'$t_\mathrm{s}\!\!-\!\tau$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(ts+0.009,-1,'$t_\mathrm{s}$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(2*ts-tau-0.02,-1,'$2t_\mathrm{s}\!\!-\!\tau$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(2*ts+0.015,-1,'$2t_\mathrm{s}$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(3*ts-tau-0.02,-1,'$3t_\mathrm{s}\!\!-\!\tau$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(3*ts+0.015,-1,'$3t_\mathrm{s}$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(4*ts-tau-0.02,-1,'$4t_\mathrm{s}\!\!-\!\tau$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(4*ts+0.015,-1,'$4t_\mathrm{s}$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(5*ts-tau-0.02,-1,'$5t_\mathrm{s}\!\!-\!\tau$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-% text(5*ts+0.015,-1,'$5t_\mathrm{s}$','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
-
-
 box off
 %axis off
 % mark inset 1
@@ -138,24 +124,24 @@ plot([inset1(1) inset1(2)],[inset1(4) inset1(4)],'k');
 plot([inset1(1) inset1(1)],[inset1(3) inset1(4)],'k');
 
 % mark relaxation
-annotation('doublearrow','Position',[0.134,0.7,0.175,0],'Head1Style','plain',...
+annotation('doublearrow','Position',[0.091,0.7,0.195,0],'Head1Style','plain',...
     'Head2Style','plain','Linewidth',lW,'color','r');
-annotation('textbox','Position',[0.1715,0.68, 0.1, 0.1],'String','relaxation',...
+annotation('textbox','Position',[0.143,0.68, 0.1, 0.1],'String','relaxation',...
     'Interpreter','latex','FontSize',fS,'HorizontalAlignment','center',...
     'VerticalAlignment','middle','Linestyle','none','color','r');
-annotation('textbox','Position',[0.1715,0.61, 0.1, 0.1],'String','$V_\mathrm{r}(x,z), \nu_\mathrm{low}$',...
+annotation('textbox','Position',[0.143,0.61, 0.1, 0.1],'String','$V_\mathrm{r}(x,z), \nu_\mathrm{low}$',...
     'Interpreter','latex','FontSize',fS,'HorizontalAlignment','center',...
     'VerticalAlignment','middle','Linestyle','none','color','r');
 
 % mark feedback
-plot([ts-tau,ts-tau],[0.4 0.5],'b');
-plot([ts,ts],[0.4 0.5],'b');
-annotation('textbox','Position',[0.267,0.53,0.1,0.1],'String','feedback',...
+plot([ts-tau,ts-tau],[0.35 0.45],'b');
+plot([ts,ts],[0.35 0.45],'b');
+annotation('textbox','Position',[0.2965,0.54,0.0,0.1],'String','feedback',...
     'Interpreter','latex','FontSize',fS,'HorizontalAlignment','center',...
     'VerticalAlignment','middle','Linestyle','none','color','b');
-annotation('arrow',[0.365 0.325],0.54*[1 1],'Linewidth',lW,'HeadStyle','plain','color','b');
-annotation('arrow',[0.272 0.312],0.54*[1 1],'Linewidth',lW,'HeadStyle','plain','color','b');
-annotation('textbox','Position',[0.267,0.44,0.1,0.1],'String','$V_\mathrm{c}(x,z;t), \nu_\mathrm{high}$',...
+annotation('arrow',[0.248 0.288],0.55*[1 1],'Linewidth',lW,'HeadStyle','plain','color','b');
+annotation('arrow',[0.345 0.305],0.55*[1 1],'Linewidth',lW,'HeadStyle','plain','color','b');
+annotation('textbox','Position',[0.2965,0.45,0.0,0.1],'String','$V_\mathrm{c}(x,z;t), \nu_\mathrm{high}$',...
     'Interpreter','latex','FontSize',fS,'HorizontalAlignment','center',...
     'VerticalAlignment','middle','Linestyle','none','color','b');
 
@@ -164,16 +150,16 @@ set(gca,'FontSize',fS);
 % mark tau
 plot([2*ts-tau,2*ts-tau],[-0.7 -0.8],'k');
 plot([2*ts,2*ts],[-0.7 -0.8],'k');
-annotation('arrow',[0.559 0.519],0.171*[1 1],'Linewidth',lW,'HeadStyle','plain');
-annotation('arrow',[0.466 0.506],0.171*[1 1],'Linewidth',lW,'HeadStyle','plain');
-annotation('textbox','Position',[0.3125,0.155, 0.4, 0.1],'String','$\tau$',...
+annotation('arrow',[0.46 0.5],0.188*[1 1],'Linewidth',lW,'HeadStyle','plain');
+annotation('arrow',[0.558 0.518],0.188*[1 1],'Linewidth',lW,'HeadStyle','plain');
+annotation('textbox','Position',[0.509,0.175, 0.0, 0.1],'String','$\tau$',...
     'Interpreter','latex','FontSize',fS,'HorizontalAlignment','center',...
     'VerticalAlignment','middle','Linestyle','none');
 
 
 legend({'system $X$','controller $Z$'},'Location','NorthWest');
 %% inset
-axes('Position',[0.5265 .63 .36 .28])
+axes('Position',[0.54 .65 .37 .29])
 box on
 % mark regions
 patch([3*ts-2*tau, 3*ts-tau, 3*ts-tau, 3*ts-2*tau],[-9 -9 9 9],...
@@ -203,8 +189,8 @@ text(3*ts+0.0007,z_traj(3*n+1)+0.1,'$z_3$','color','b','FontSize',fS,'interprete
 
 
 %% connect insets with main plot
-annotation('line',[0.5265 0.691],[0.63 0.518]);
-annotation('line',[0.8865 0.722],[0.63 0.518]);
+annotation('line',[0.54 0.705],[0.65 0.55]);
+annotation('line',[0.91 0.739],[0.65 0.55]);
 
 %% export
 saveas(gcf, '../../doc/feedback_process.eps','epsc')

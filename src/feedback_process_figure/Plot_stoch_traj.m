@@ -6,8 +6,8 @@
 %  outputs eps figure of example trajectories with insets
 %
 % author:  JEhrich
-% version: 1.1 (2022-02-25)
-% changes: increased width of panel
+% version: 1.2 (2022-03-01)
+% changes: renamed nu_high and nu_low
 clear
 close all
 clc
@@ -23,9 +23,9 @@ set(groot, 'defaultLegendInterpreter','latex');
 % seed RNG
 rng(1)
 % controller mobility during relaxation
-nu_relax = 3E-3;
-% controller mobility during measurement-feedback
-nu_meas = 8E0;
+nu_low = 3E-3;
+% controller mobility during control operation
+nu_high = 8E0;
 % measurement error
 s2 = 0.005;
 % total time interval
@@ -61,18 +61,18 @@ for ii = 1:K
     % relaxation
     for jj = 1:n_relax
         dx = -(x-z)*dt + sqrt(2*dt)*randn;
-        dz = nu_relax*(x-z)*dt + sqrt(2*nu_relax*dt)*randn;
+        dz = nu_low*(x-z)*dt + sqrt(2*nu_low*dt)*randn;
         x = x + dx;
         z = z + dz;
         x_traj((ii-1)*n+jj+1) = x;
         z_traj((ii-1)*n+jj+1) = z;
     end
-    % measurement-feedback
+    % control
     for jj = 1:n_meas
         % stiffness
         k = k0 + jj/n_meas*(k1 - k0);
         dx = -k*(x-z)*dt + sqrt(2*dt)*randn;
-        dz = nu_meas*k*(x-z)*dt + sqrt(2*nu_meas*dt)*randn;
+        dz = nu_high*k*(x-z)*dt + sqrt(2*nu_high*dt)*randn;
         x = x + dx;
         z = z + dz;
         x_traj((ii-1)*n+n_relax+jj+1) = x;

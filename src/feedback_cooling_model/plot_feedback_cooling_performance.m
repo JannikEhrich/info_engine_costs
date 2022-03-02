@@ -56,6 +56,14 @@ semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 for ii = 1:length(ts_vec)
     semilogx(s2_vec,W_fb(ii,:)/ts_vec(ii),'LineStyle',lStyle{ii},'Color',colors(ii,:),'linewidth',lW);
 end
+
+% add marker
+ts_m = 0.3;
+s2_m = 0.1;
+W_fb_m = -((exp(-2*ts_m) - 1)*(s2_m - 1))/2;
+I_np_Z_m = -log(s2_m)/2 + log(exp(2*ts_m) + s2_m - 1)/2 - ts_m;
+plot(s2_m,W_fb_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
+
 set(gca,'FontSize',fS);
 title('feedback work $\left\langle \delta w_\mathrm{fb}\right\rangle/t_s$','FontWeight','normal','Interpreter','latex');
 lgd = legend({...
@@ -82,6 +90,8 @@ title('control work $\lim_{k \to \infty} \delta I^\mathrm{nonpred}_Z(k)/t_s$','F
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,-1.3,6.4]);
 text(4E-3,6.4,'(b)','interpreter','latex','FontSize',fS+2);
+% add marker
+plot(s2_m,I_np_Z_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 %% plot total work
 ax3 = axes('Position',[0.13 0.29 0.77 0.2]);
@@ -95,6 +105,8 @@ title('total work','FontWeight','normal','Interpreter','latex');
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,0,8]);
 text(4E-3,8,'(c)','interpreter','latex','FontSize',fS+2);
+% add marker
+plot(s2_m,(W_fb_m+I_np_Z_m)/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 
 %% plot efficiency
@@ -109,6 +121,8 @@ xlabel('$\sigma^2$','Interpreter','latex');
 title('efficiency $\eta_\mathrm{inf} = -\lim_{k \to \infty} \left\langle \delta w_\mathrm{fb}\right\rangle/\delta I^\mathrm{nonpred}_Z(k)$','FontWeight','normal','Interpreter','latex');
 axis([1E-2,1E1,0,1]);
 text(4E-3,1,'(d)','interpreter','latex','FontSize',fS+2);
+% add marker
+plot(s2_m,-W_fb_m/I_np_Z_m,'xk','linewidth',lW,'markerSize',mS);
 
 %% export
 saveas(gcf, '../../doc/feedback_cooling_performance.eps','epsc')

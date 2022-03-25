@@ -7,8 +7,8 @@
 %  work, and efficiency
 %
 % author:  JEhrich
-% version: 1.1 (2022-02-25)
-% changes: added labels (a), (b),...
+% version: 1.2 (2022-03-25)
+% changes: changed w_fb to superscript
 clear
 close all
 clc
@@ -65,7 +65,7 @@ I_np_Z_m = -log(s2_m)/2 + log(exp(2*ts_m) + s2_m - 1)/2 - ts_m;
 plot(s2_m,W_fb_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 set(gca,'FontSize',fS);
-title('feedback work $\left\langle \delta w_\mathrm{fb}\right\rangle/t_s$','FontWeight','normal','Interpreter','latex');
+title('feedback work $\left\langle w^\mathrm{fb}_k\right\rangle/t_s$','FontWeight','normal','Interpreter','latex');
 lgd = legend({...
     ['$' num2str(ts_vec(1)) '$'],...
     ['$' num2str(ts_vec(2)) '$'],...
@@ -118,7 +118,7 @@ for ii = 1:length(ts_vec)
 end
 set(gca,'FontSize',fS);
 xlabel('$\sigma^2$','Interpreter','latex');
-title('efficiency $\eta_\mathrm{inf} = -\lim_{k \to \infty} \left\langle \delta w_\mathrm{fb}\right\rangle/\delta I^\mathrm{nonpred}_Z(k)$','FontWeight','normal','Interpreter','latex');
+title('efficiency $\eta_\mathrm{inf} = -\lim_{k \to \infty} \left\langle w^\mathrm{fb}_k\right\rangle/\delta I^\mathrm{nonpred}_Z(k)$','FontWeight','normal','Interpreter','latex');
 axis([1E-2,1E1,0,1]);
 text(4E-3,1,'(d)','interpreter','latex','FontSize',fS+2);
 % add marker

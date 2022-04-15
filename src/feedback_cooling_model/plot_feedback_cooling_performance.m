@@ -7,13 +7,13 @@
 %  work, and efficiency
 %
 % author:  JEhrich
-% version: 1.2 (2022-03-25)
-% changes: changed w_fb to superscript
+% version: 1.3 (2022-04-15)
+% changes: moved figure subtitle to y-axis
 clear
 close all
 clc
 % set font size, line width, and marker size
-fS = 16;
+fS = 15;
 lW = 2.7;
 mS = 11;
 % set interpreter to latex
@@ -45,8 +45,8 @@ colors = hsv(length(ts_vec));
 lStyle{1} = '-';
 lStyle{2} = '-.';
 lStyle{3} = '--';
-figure('Position',[400,1000,560,900]);
-ax1 = axes('Position',[0.13 0.77 0.77 0.2]);
+figure('Position',[400,1000,560,800]);
+ax1 = axes('Position',[0.13 0.77 0.77 0.22]);
 for ii = 1:length(ts_vec)
     semilogx(nan,nan,'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
     hold on;
@@ -65,7 +65,7 @@ I_np_Z_m = -log(s2_m)/2 + log(exp(2*ts_m) + s2_m - 1)/2 - ts_m;
 plot(s2_m,W_fb_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 set(gca,'FontSize',fS);
-title('feedback work $\left\langle w^\mathrm{fb}_k\right\rangle/t_s$','FontWeight','normal','Interpreter','latex');
+ylabel('$\left\langle w^\mathrm{fb}_k\right\rangle/t_s$','FontWeight','normal','Interpreter','latex');
 lgd = legend({...
     ['$' num2str(ts_vec(1)) '$'],...
     ['$' num2str(ts_vec(2)) '$'],...
@@ -74,11 +74,11 @@ legend boxoff
 lgd.Title.String = '$t_s$';
 lgd.FontSize = fS;
 set(gca,'XTickLabels',[]);
-axis([1E-2,1E1,-1.3,2.5]);
-text(4E-3,2.5,'(a)','interpreter','latex','FontSize',fS+2);
+axis([1E-2,0.8E1,-1.3,2.5]);
+text(3.2E-3,2.5,'(a)','interpreter','latex','FontSize',fS+2);
 
 %% plot input work
-ax2 = axes('Position',[0.13 0.53 0.77 0.2]);
+ax2 = axes('Position',[0.13 0.53 0.77 0.22]);
 semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
@@ -86,31 +86,31 @@ for ii = 1:length(ts_vec)
     semilogx(s2_vec,I_np_Z(ii,:)/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-title('control work $\lim_{k \to \infty} \delta I^\mathrm{nonpred}_Z(k)/t_s$','FontWeight','normal','Interpreter','latex');
+ylabel('$\left( H[Z_{k-1}|X_k]\!-\!H[Z_{k}|X_k] \right)/t_s$','FontWeight','normal','Interpreter','latex');
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,-1.3,6.4]);
-text(4E-3,6.4,'(b)','interpreter','latex','FontSize',fS+2);
+text(3.2E-3,6.4,'(b)','interpreter','latex','FontSize',fS+2);
 % add marker
 plot(s2_m,I_np_Z_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 %% plot total work
-ax3 = axes('Position',[0.13 0.29 0.77 0.2]);
+ax3 = axes('Position',[0.13 0.29 0.77 0.22]);
 semilogx([1,1],[-10,100],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 for ii = 1:length(ts_vec)
     semilogx(s2_vec,(W_fb(ii,:)+I_np_Z(ii,:))/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-title('total work','FontWeight','normal','Interpreter','latex');
+ylabel('total work','FontWeight','normal','Interpreter','latex');
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,0,8]);
-text(4E-3,8,'(c)','interpreter','latex','FontSize',fS+2);
+text(3.2E-3,8,'(c)','interpreter','latex','FontSize',fS+2);
 % add marker
 plot(s2_m,(W_fb_m+I_np_Z_m)/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 
 %% plot efficiency
-ax4 = axes('Position',[0.13 0.05 0.77 0.2]);
+ax4 = axes('Position',[0.13 0.05 0.77 0.22]);
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 for ii = 1:length(ts_vec)
@@ -118,9 +118,9 @@ for ii = 1:length(ts_vec)
 end
 set(gca,'FontSize',fS);
 xlabel('$\sigma^2$','Interpreter','latex');
-title('efficiency $\eta_\mathrm{inf} = -\lim_{k \to \infty} \left\langle w^\mathrm{fb}_k\right\rangle/\delta I^\mathrm{nonpred}_Z(k)$','FontWeight','normal','Interpreter','latex');
+ylabel('efficiency $\eta_\mathrm{inf}$','FontWeight','normal','Interpreter','latex');
 axis([1E-2,1E1,0,1]);
-text(4E-3,1,'(d)','interpreter','latex','FontSize',fS+2);
+text(3.2E-3,1,'(d)','interpreter','latex','FontSize',fS+2);
 % add marker
 plot(s2_m,-W_fb_m/I_np_Z_m,'xk','linewidth',lW,'markerSize',mS);
 

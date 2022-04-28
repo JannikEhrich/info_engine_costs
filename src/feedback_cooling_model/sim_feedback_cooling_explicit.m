@@ -5,9 +5,9 @@
 %  outputs eps figure showing feedback and control work and efficiency
 %
 % author:  JEhrich
-% version: 1.0 (2022-03-02)
-% changes: fixed error calculation and added error propagation to
-% efficiency plot
+% version: 1.1 (2022-04-28)
+% changes: changed order of relaxation ans feedback steps, added plot of
+% post-measurement variance
 clear
 close all
 clc
@@ -45,6 +45,8 @@ W_c_mean = nan(length(nu_h_vec),1);
 W_fb_var = nan(length(nu_h_vec),1);
 W_c_var = nan(length(nu_h_vec),1);
 
+s2_meas = nan(length(nu_h_vec),1);
+
 tic
 parfor ii = 1:length(nu_h_vec)
     ii
@@ -58,21 +60,27 @@ parfor ii = 1:length(nu_h_vec)
     z = randn*sqrt(s2);
     % initial equilibration
     for kk = 1:K_ini
-        [x,z,~,~] = sim_one_step(x,z,ts,s2,tau,nu_l,nu_h,C_prop,dt);
+        [x,z,~,~,~] = sim_one_step(x,z,ts,s2,tau,nu_l,nu_h,C_prop,dt);
     end
     
     % simulate K steps
     W_fb = nan(K,1);
     W_c = nan(K,1);
+    % data structures for post-measurement deviation
+    d_meas = nan(K,1);
     for kk = 1:K
-        [x,z,W_fb(kk),W_c(kk)] = sim_one_step(x,z,ts,s2,tau,nu_l,nu_h,C_prop,dt);
+        [x,z,W_fb(kk),W_c(kk),d_meas(kk)] = sim_one_step(x,z,ts,s2,tau,nu_l,nu_h,C_prop,dt);
     end
     
-    % calculate mean and variance
+    % calculate mean and variance of works
     W_fb_mean(ii) = mean(W_fb);
     W_c_mean(ii) = mean(W_c);
     W_fb_var(ii) = var(W_fb);
     W_c_var(ii) = var(W_c);
+
+    % calculate variance of z around x after measurement
+    s2_meas(ii) = mean(d_meas.^2);
+
 end
 toc
 
@@ -83,62 +91,73 @@ eta_err = sqrt((1./W_c_mean).^2.*W_fb_err.^2 + (W_fb_mean./W_c_mean.^2).^2.*W_c_
 
 %% analytical expectations
 W_fb_ana = -((exp(-2*ts) - 1)*(s2 - 1))/2;
-I_nonpred_Z = -log(s2)/2 + log((s2 - 1)*exp(-2*ts) + 1)/2;
+W_c_ana = -log(s2)/2 + log((s2 - 1)*exp(-2*ts) + 1)/2;
 
 %% plot convergence
-figure('Position',[400,1000,560,650]);
-ax1 = axes('Position',[0.13 0.55 0.77 0.42]);
+figure('Position',[400,1000,560,850]);
+ax1 = axes('Position',[0.13 0.69 0.77 0.29]);
 %errorbar(nu_h_vec,W_c_mean/ts,W_c_err/ts,'bs','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,W_c_mean/ts,'bs','MarkerSize',mS,'lineWidth',lW);
 hold on;
-plot(nu_h_vec,ones(size(nu_h_vec))*I_nonpred_Z/ts,'b','MarkerSize',mS,'lineWidth',lW);
-%errorbar(nu_h_vec,W_fb_mean/ts,W_fb_err/ts,'rs','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,W_fb_mean/ts,'rs','MarkerSize',mS,'lineWidth',lW);
+plot(nu_h_vec,ones(size(nu_h_vec))*W_c_ana/ts,'b','MarkerSize',mS,'lineWidth',lW);
+%errorbar(nu_h_vec,W_fb_mean/ts,W_fb_err/ts,'rs','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,ones(size(nu_h_vec))*W_fb_ana/ts,'r','MarkerSize',mS,'lineWidth',lW);
 set(gca,'XScale','log','FontSize',fS);
 set(gca,'XTick',10.^[0,1,2,3,4,5]);
 set(gca,'XTicklabels',[]);
 %xlabel('$\nu_\mathrm{high}$','Interpreter','latex');
 ylabel('rate of work','Interpreter','latex');
-legend({'$\left\langle \delta w_\mathrm{c} \right\rangle/t_\mathrm{s}$ (sim)',...
-    '$\delta I^\mathrm{nonpred}_Z/t_\mathrm{s}$',...
-    '$\left\langle \delta w_\mathrm{fb} \right\rangle/t_\mathrm{s}$ (sim)',...
-    '$\left\langle \delta w_\mathrm{fb} \right\rangle/t_\mathrm{s}$ (model)'},...
-    'Location','East');
+legend({'$\left\langle w^\mathrm{c} \right\rangle/t_\mathrm{s}$',...
+    '$\left\langle w^\mathrm{fb} \right\rangle/t_\mathrm{s}$'},...
+    'Location','NorthWest');
 legend boxoff 
 axis([min(nu_h_vec),max(nu_h_vec),-1,4.5]);
 text(2E-1,4.5,'(a)','interpreter','latex','FontSize',fS+2);
 
 
+% plot deviation from measurement
+ax2 = axes('Position',[0.13 0.38 0.77 0.29]);
+semilogx(nu_h_vec,s2_meas,'ks','MarkerSize',mS,'lineWidth',lW);
+hold on;
+plot(nu_h_vec,ones(size(nu_h_vec))*s2,'k','MarkerSize',mS,'lineWidth',lW);
+%xlabel('$\nu_\mathrm{high}$','Interpreter','latex');
+ylabel('$\left\langle (x_{k} - z_{k})^2 \right\rangle$','Interpreter','latex');
+set(gca,'XScale','log','FontSize',fS);
+set(gca,'XTick',10.^[0,1,2,3,4,5]);
+set(gca,'XTicklabels',[]);
+text(3E-2, 0.14 , '$\sigma^2$',...
+    'Interpreter','latex','FontSize',fS);
+text(2E-1,1,'(b)','interpreter','latex','FontSize',fS+2);
+
+
 % plot efficiency
-ax2 = axes('Position',[0.13 0.09 0.77 0.42]);
+ax3 = axes('Position',[0.13 0.07 0.77 0.29]);
 errorbar(nu_h_vec,-W_fb_mean./W_c_mean,eta_err,'ks','MarkerSize',mS,'lineWidth',lW);
 hold on;
-plot(nu_h_vec,-ones(size(nu_h_vec))*W_fb_ana/I_nonpred_Z,'k','MarkerSize',mS,'lineWidth',lW);
+plot(nu_h_vec,-ones(size(nu_h_vec))*W_fb_ana/W_c_ana,'k','MarkerSize',mS,'lineWidth',lW);
 xlabel('$\nu_\mathrm{high}$','Interpreter','latex');
 ylabel('efficiency','Interpreter','latex');
 set(gca,'XScale','log','FontSize',fS);
 set(gca,'XTick',10.^[0,1,2,3,4,5]);
-legend({'$-\left\langle \delta w_\mathrm{fb} \right\rangle/\left\langle \delta w_\mathrm{c} \right\rangle$ (sim)',...
-    '$\eta_\mathrm{inf}$'},...
-    'Location','SouthEast');
+%set(gca,'XTicklabels',[]);
 axis([min(nu_h_vec),max(nu_h_vec),0,0.28]);
-text(2E-1,0.28,'(b)','interpreter','latex','FontSize',fS+2);
-legend boxoff 
+text(2E-1,0.28,'(c)','interpreter','latex','FontSize',fS+2);
+text(1E2, 0.13 , '$-\left\langle w^\mathrm{fb} \right\rangle/\left\langle w^\mathrm{c} \right\rangle$',...
+    'Interpreter','latex','FontSize',fS);
+text(1E1, 0.24 , '$\eta_\mathrm{inf}$',...
+    'Interpreter','latex','FontSize',fS);
 
 % export
 saveas(gcf, '../../doc/feedback_cooling_explicit_sim.eps','epsc')
 
 
 
+
 %% support function simulating one time step
-function [x,z,W_fb,W_c] = sim_one_step(x0,z0,ts,s2,tau,nu_l,nu_h,C_prop,dt)
-    % relaxation, draw next states
-    mu_x = ((x0 - z0)*exp((nu_l + 1)*(-ts + tau)) + nu_l*x0 + z0)/(nu_l + 1);
-    mu_z = (-(x0 - z0)*exp((nu_l + 1)*(-ts + tau))*nu_l + nu_l*x0 + z0)/(nu_l + 1);
-    x = mu_x + randn*sqrt(C_prop(1,1));
-    z = mu_z + C_prop(1,2)/C_prop(1,1)*(x-mu_x) + randn*sqrt(C_prop(2,2)-C_prop(1,2)^2/C_prop(1,1));
-    
+function [x,z,W_fb,W_c,d_meas] = sim_one_step(x0,z0,ts,s2,tau,nu_l,nu_h,C_prop,dt)
+    x = x0;
+    z = z0;
     % control operation, initial energy
     E0 = 1/2*(x-z)^2;
     % initial and final stiffness
@@ -170,6 +189,16 @@ function [x,z,W_fb,W_c] = sim_one_step(x0,z0,ts,s2,tau,nu_l,nu_h,C_prop,dt)
     E4 = 1/2*(x-z)^2;
     % feedback work
     W_fb = E4 - E0;
+
+    % calculate post-measurement deviation of system and controller
+    d_meas = x-z;
+
+    % relaxation, draw next states
+    mu_x = ((x - z)*exp((nu_l + 1)*(-ts + tau)) + nu_l*x + z)/(nu_l + 1);
+    mu_z = (-(x - z)*exp((nu_l + 1)*(-ts + tau))*nu_l + nu_l*x + z)/(nu_l + 1);
+    x = mu_x + randn*sqrt(C_prop(1,1));
+    z = mu_z + C_prop(1,2)/C_prop(1,1)*(x-mu_x) + randn*sqrt(C_prop(2,2)-C_prop(1,2)^2/C_prop(1,1));
+    
 end
 
 

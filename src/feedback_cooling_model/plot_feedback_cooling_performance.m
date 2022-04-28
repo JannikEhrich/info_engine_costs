@@ -7,13 +7,14 @@
 %  work, and efficiency
 %
 % author:  JEhrich
-% version: 1.3 (2022-04-15)
-% changes: moved figure subtitle to y-axis
+% version: 1.4 (2022-04-28)
+% changes: renamed non-predictive information to minimum control work,
+% re-adjusted layout, increased font size
 clear
 close all
 clc
 % set font size, line width, and marker size
-fS = 15;
+fS = 18;
 lW = 2.7;
 mS = 11;
 % set interpreter to latex
@@ -28,7 +29,7 @@ s2_vec = logspace(-4,3,1E3);
 
 %% output work and information flow
 W_fb = nan(length(s2_vec),length(ts_vec));
-I_np_Z = nan(length(s2_vec),length(ts_vec));
+W_c_min = nan(length(s2_vec),length(ts_vec));
 
 for ii = 1:length(ts_vec)
     ts = ts_vec(ii);
@@ -36,7 +37,7 @@ for ii = 1:length(ts_vec)
         s2 = s2_vec(jj);
         
         W_fb(ii,jj) = -((exp(-2*ts) - 1)*(s2 - 1))/2;
-        I_np_Z(ii,jj) = -log(s2)/2 + log(exp(2*ts) + s2 - 1)/2 - ts;
+        W_c_min(ii,jj) = -log(s2)/2 + log(exp(2*ts) + s2 - 1)/2 - ts;
     end
 end
 
@@ -46,7 +47,7 @@ lStyle{1} = '-';
 lStyle{2} = '-.';
 lStyle{3} = '--';
 figure('Position',[400,1000,560,800]);
-ax1 = axes('Position',[0.13 0.77 0.77 0.22]);
+ax1 = axes('Position',[0.13 0.76 0.77 0.21]);
 for ii = 1:length(ts_vec)
     semilogx(nan,nan,'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
     hold on;
@@ -61,7 +62,7 @@ end
 ts_m = 0.3;
 s2_m = 0.1;
 W_fb_m = -((exp(-2*ts_m) - 1)*(s2_m - 1))/2;
-I_np_Z_m = -log(s2_m)/2 + log(exp(2*ts_m) + s2_m - 1)/2 - ts_m;
+W_c_min_m = -log(s2_m)/2 + log(exp(2*ts_m) + s2_m - 1)/2 - ts_m;
 plot(s2_m,W_fb_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 set(gca,'FontSize',fS);
@@ -77,28 +78,28 @@ set(gca,'XTickLabels',[]);
 axis([1E-2,0.8E1,-1.3,2.5]);
 text(3.2E-3,2.5,'(a)','interpreter','latex','FontSize',fS+2);
 
-%% plot input work
-ax2 = axes('Position',[0.13 0.53 0.77 0.22]);
+%% plot control work
+ax2 = axes('Position',[0.13 0.53 0.77 0.21]);
 semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,I_np_Z(ii,:)/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
+    semilogx(s2_vec,W_c_min(ii,:)/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-ylabel('$\left( H[Z_{k-1}|X_k]\!-\!H[Z_{k}|X_k] \right)/t_s$','FontWeight','normal','Interpreter','latex');
+ylabel('$\left\langle w^\mathrm{c}_k\right\rangle_\mathrm{min}/t_s$','FontWeight','normal','Interpreter','latex');
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,-1.3,6.4]);
 text(3.2E-3,6.4,'(b)','interpreter','latex','FontSize',fS+2);
 % add marker
-plot(s2_m,I_np_Z_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
+plot(s2_m,W_c_min_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 %% plot total work
-ax3 = axes('Position',[0.13 0.29 0.77 0.22]);
+ax3 = axes('Position',[0.13 0.3 0.77 0.21]);
 semilogx([1,1],[-10,100],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,(W_fb(ii,:)+I_np_Z(ii,:))/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
+    semilogx(s2_vec,(W_fb(ii,:)+W_c_min(ii,:))/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
 ylabel('total work','FontWeight','normal','Interpreter','latex');
@@ -106,15 +107,15 @@ set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,0,8]);
 text(3.2E-3,8,'(c)','interpreter','latex','FontSize',fS+2);
 % add marker
-plot(s2_m,(W_fb_m+I_np_Z_m)/ts_m,'xk','linewidth',lW,'markerSize',mS);
+plot(s2_m,(W_fb_m+W_c_min_m)/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 
 %% plot efficiency
-ax4 = axes('Position',[0.13 0.05 0.77 0.22]);
+ax4 = axes('Position',[0.13 0.07 0.77 0.21]);
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,-W_fb(ii,:)./I_np_Z(ii,:),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW,'MarkerSize',mS);
+    semilogx(s2_vec,-W_fb(ii,:)./W_c_min(ii,:),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW,'MarkerSize',mS);
 end
 set(gca,'FontSize',fS);
 xlabel('$\sigma^2$','Interpreter','latex');
@@ -122,7 +123,7 @@ ylabel('efficiency $\eta_\mathrm{inf}$','FontWeight','normal','Interpreter','lat
 axis([1E-2,1E1,0,1]);
 text(3.2E-3,1,'(d)','interpreter','latex','FontSize',fS+2);
 % add marker
-plot(s2_m,-W_fb_m/I_np_Z_m,'xk','linewidth',lW,'markerSize',mS);
+plot(s2_m,-W_fb_m/W_c_min_m,'xk','linewidth',lW,'markerSize',mS);
 
 %% export
 saveas(gcf, '../../doc/feedback_cooling_performance.eps','epsc')

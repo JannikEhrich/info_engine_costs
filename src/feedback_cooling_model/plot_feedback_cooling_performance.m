@@ -7,9 +7,9 @@
 %  work, and efficiency
 %
 % author:  JEhrich
-% version: 1.4 (2022-04-28)
-% changes: renamed non-predictive information to minimum control work,
-% re-adjusted layout, increased font size
+% version: 1.5 (2022-05-11)
+% changes: fixed axis range of first subplot, changed total work to "total
+% power"
 clear
 close all
 clc
@@ -75,7 +75,7 @@ legend boxoff
 lgd.Title.String = '$t_s$';
 lgd.FontSize = fS;
 set(gca,'XTickLabels',[]);
-axis([1E-2,0.8E1,-1.3,2.5]);
+axis([1E-2,1E1,-1.3,2.5]);
 text(3.2E-3,2.5,'(a)','interpreter','latex','FontSize',fS+2);
 
 %% plot control work
@@ -102,7 +102,7 @@ for ii = 1:length(ts_vec)
     semilogx(s2_vec,(W_fb(ii,:)+W_c_min(ii,:))/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-ylabel('total work','FontWeight','normal','Interpreter','latex');
+ylabel('total power','FontWeight','normal','Interpreter','latex');
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,0,8]);
 text(3.2E-3,8,'(c)','interpreter','latex','FontSize',fS+2);

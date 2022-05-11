@@ -46,6 +46,8 @@ W_fb_var = nan(length(nu_h_vec),1);
 W_c_var = nan(length(nu_h_vec),1);
 
 s2_meas = nan(length(nu_h_vec),1);
+s2_meas_err = nan(length(nu_h_vec),1);
+
 
 tic
 parfor ii = 1:length(nu_h_vec)
@@ -80,6 +82,7 @@ parfor ii = 1:length(nu_h_vec)
 
     % calculate variance of z around x after measurement
     s2_meas(ii) = mean(d_meas.^2);
+    s2_meas_err(ii) = sqrt(var(d_meas.^2)/K)
 
 end
 toc
@@ -118,7 +121,8 @@ text(2E-1,4.5,'(a)','interpreter','latex','FontSize',fS+2);
 
 % plot deviation from measurement
 ax2 = axes('Position',[0.13 0.38 0.77 0.29]);
-semilogx(nu_h_vec,s2_meas,'ks','MarkerSize',mS,'lineWidth',lW);
+%errorbar(nu_h_vec,s2_meas,s2_meas_err,'ks','MarkerSize',mS,'lineWidth',lW);
+plot(nu_h_vec,s2_meas,'ks','MarkerSize',mS,'lineWidth',lW);
 hold on;
 plot(nu_h_vec,ones(size(nu_h_vec))*s2,'k','MarkerSize',mS,'lineWidth',lW);
 %xlabel('$\nu_\mathrm{high}$','Interpreter','latex');

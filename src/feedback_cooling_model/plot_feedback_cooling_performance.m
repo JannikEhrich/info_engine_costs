@@ -14,7 +14,7 @@ clear
 close all
 clc
 % set font size, line width, and marker size
-fS = 18;
+fS = 20;
 lW = 2.7;
 mS = 11;
 % set interpreter to latex

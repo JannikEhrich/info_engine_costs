@@ -6,13 +6,13 @@
 %  outputs eps figure of example trajectories with insets
 %
 % author:  JEhrich
-% version: 1.4 (2022-05-06)
-% changes: removed potential energy labels
+% version: 1.6 (2022-05-20)
+% changes: reverted z_k from z_{k^+}
 clear
 close all
 clc
 % set font size, line width, and marker size
-fS = 18;
+fS = 20;
 lW = 2.0;
 mS = 11;
 % set interpreter to latex
@@ -177,13 +177,13 @@ set(gca,'FontSize',fS);
 plot(3*ts,x_traj(3*n+1),'.r','LineWidth',lW,'MarkerSize',45);
 text(3*ts-0.0007,x_traj(3*n+1)+0.1,'$x_3$','color','r','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
 plot(3*ts,z_traj(3*n+1),'.b','LineWidth',lW,'MarkerSize',45);
-text(3*ts-0.0007,z_traj(3*n+1)-0.1,'$\approx\!z_2$','color','b','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
+text(3*ts-0.0007,z_traj(3*n+1)-0.1,'$\approx\!z_{2}$','color','b','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
 
 % mark states 2
 %plot(3*ts+tau,x_traj(3*n+n_meas+1),'.r','LineWidth',lW,'MarkerSize',45);
 %text(3*ts+tau+0.0005,x_traj(3*n+n_meas+1)+0.15,'$x_3$','color','r','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
 plot(3*ts+tau,z_traj(3*n+n_meas+1),'.b','LineWidth',lW,'MarkerSize',45);
-text(3*ts+tau-0.001,z_traj(3*n+n_meas+1)-0.05,'$z_3$','color','b','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
+text(3*ts+tau-0.001,z_traj(3*n+n_meas+1)-0.06,'$z_{3}$','color','b','FontSize',fS,'interpreter','latex','HorizontalAlignment','center','VerticalAlignment', 'middle');
 
 plot(3*ts-1*tau:dt*1E1:3*ts+2*tau,z_traj(3*n-1*n_meas:1E1:3*n+2*n_meas),'b','LineWidth',lW,'MarkerSize',mS);
 

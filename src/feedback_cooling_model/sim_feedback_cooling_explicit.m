@@ -5,14 +5,13 @@
 %  outputs eps figure showing feedback and control work and efficiency
 %
 % author:  JEhrich
-% version: 1.1 (2022-04-28)
-% changes: changed order of relaxation ans feedback steps, added plot of
-% post-measurement variance
+% version: 1.2 (2022-05-20)
+% changes: removed legend in panel (a), label curves directly instead
 clear
 close all
 clc
 % set font size, line width, and marker size
-fS = 18;
+fS = 20;
 lW = 2.0;
 mS = 11;
 % set interpreter to latex
@@ -111,11 +110,15 @@ set(gca,'XTick',10.^[0,1,2,3,4,5]);
 set(gca,'XTicklabels',[]);
 %xlabel('$\nu_\mathrm{high}$','Interpreter','latex');
 ylabel('rate of work','Interpreter','latex');
-legend({'$\left\langle w^\mathrm{c} \right\rangle/t_\mathrm{s}$',...
-    '$\left\langle w^\mathrm{fb} \right\rangle/t_\mathrm{s}$'},...
-    'Location','NorthWest');
-legend boxoff 
+%legend({'$\left\langle w^\mathrm{c} \right\rangle/t_\mathrm{s}$',...
+%    '$\left\langle w^\mathrm{fb} \right\rangle/t_\mathrm{s}$'},...
+%    'Location','NorthWest');
+%legend boxoff 
 axis([min(nu_h_vec),max(nu_h_vec),-1,4.5]);
+text(1E2, 0 , '$\left\langle w^\mathrm{fb} \right\rangle/t_\mathrm{s}$',...
+    'Interpreter','latex','FontSize',fS,'Color','r');
+text(8E2, 3.8 , '$\left\langle w^\mathrm{c} \right\rangle/t_\mathrm{s}$',...
+    'Interpreter','latex','FontSize',fS,'Color','b');
 text(2E-1,4.5,'(a)','interpreter','latex','FontSize',fS+2);
 
 

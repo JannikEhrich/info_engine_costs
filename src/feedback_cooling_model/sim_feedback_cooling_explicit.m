@@ -5,8 +5,8 @@
 %  outputs eps figure showing feedback and control work and efficiency
 %
 % author:  JEhrich
-% version: 1.2 (2022-05-20)
-% changes: removed legend in panel (a), label curves directly instead
+% version: 1.3 (2022-06-06)
+% changes: made output figure shorter
 clear
 close all
 clc
@@ -96,12 +96,13 @@ W_fb_ana = -((exp(-2*ts) - 1)*(s2 - 1))/2;
 W_c_ana = -log(s2)/2 + log((s2 - 1)*exp(-2*ts) + 1)/2;
 
 %% plot convergence
-figure('Position',[400,1000,560,850]);
-ax1 = axes('Position',[0.13 0.69 0.77 0.29]);
+%figure('Position',[400,1000,560,850]);
+figure('Position',[400,1000,560,700]);
+ax1 = axes('Position',[0.13 0.705 0.77 0.275]);
 %errorbar(nu_h_vec,W_c_mean/ts,W_c_err/ts,'bs','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,W_c_mean/ts,'bs','MarkerSize',mS,'lineWidth',lW);
 hold on;
-plot(nu_h_vec,W_fb_mean/ts,'rs','MarkerSize',mS,'lineWidth',lW);
+plot(nu_h_vec,W_fb_mean/ts,'ro','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,ones(size(nu_h_vec))*W_c_ana/ts,'b','MarkerSize',mS,'lineWidth',lW);
 %errorbar(nu_h_vec,W_fb_mean/ts,W_fb_err/ts,'rs','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,ones(size(nu_h_vec))*W_fb_ana/ts,'r','MarkerSize',mS,'lineWidth',lW);
@@ -115,15 +116,15 @@ ylabel('rate of work','Interpreter','latex');
 %    'Location','NorthWest');
 %legend boxoff 
 axis([min(nu_h_vec),max(nu_h_vec),-1,4.5]);
-text(1E2, 0 , '$\left\langle w^\mathrm{fb} \right\rangle/t_\mathrm{s}$',...
+text(1E2, 0.1 , '$\left\langle w^\mathrm{fb} \right\rangle/t_\mathrm{s}$',...
     'Interpreter','latex','FontSize',fS,'Color','r');
-text(8E2, 3.8 , '$\left\langle w^\mathrm{c} \right\rangle/t_\mathrm{s}$',...
+text(8E2, 3.9 , '$\left\langle w^\mathrm{c} \right\rangle/t_\mathrm{s}$',...
     'Interpreter','latex','FontSize',fS,'Color','b');
 text(2E-1,4.5,'(a)','interpreter','latex','FontSize',fS+2);
 
 
 % plot deviation from measurement
-ax2 = axes('Position',[0.13 0.38 0.77 0.29]);
+ax2 = axes('Position',[0.13 0.395 0.77 0.275]);
 %errorbar(nu_h_vec,s2_meas,s2_meas_err,'ks','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,s2_meas,'ks','MarkerSize',mS,'lineWidth',lW);
 hold on;
@@ -139,7 +140,7 @@ text(2E-1,1,'(b)','interpreter','latex','FontSize',fS+2);
 
 
 % plot efficiency
-ax3 = axes('Position',[0.13 0.07 0.77 0.29]);
+ax3 = axes('Position',[0.13 0.085 0.77 0.275]);
 errorbar(nu_h_vec,-W_fb_mean./W_c_mean,eta_err,'ks','MarkerSize',mS,'lineWidth',lW);
 hold on;
 plot(nu_h_vec,-ones(size(nu_h_vec))*W_fb_ana/W_c_ana,'k','MarkerSize',mS,'lineWidth',lW);

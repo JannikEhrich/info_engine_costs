@@ -5,8 +5,9 @@
 %  outputs eps figure showing feedback and control work and efficiency
 %
 % author:  JEhrich
-% version: 1.3 (2022-06-06)
-% changes: made output figure shorter
+% version: 1.4 (2022-06-13)
+% changes: changed fb work to app work and c work to add work
+
 clear
 close all
 clc
@@ -39,10 +40,10 @@ K_ini = 10;
 
 %% main loop
 % data structures for work mean and variance
-W_fb_mean = nan(length(nu_h_vec),1);
-W_c_mean = nan(length(nu_h_vec),1);
-W_fb_var = nan(length(nu_h_vec),1);
-W_c_var = nan(length(nu_h_vec),1);
+W_app_mean = nan(length(nu_h_vec),1);
+W_add_mean = nan(length(nu_h_vec),1);
+W_app_var = nan(length(nu_h_vec),1);
+W_add_var = nan(length(nu_h_vec),1);
 
 s2_meas = nan(length(nu_h_vec),1);
 s2_meas_err = nan(length(nu_h_vec),1);
@@ -74,10 +75,10 @@ parfor ii = 1:length(nu_h_vec)
     end
     
     % calculate mean and variance of works
-    W_fb_mean(ii) = mean(W_fb);
-    W_c_mean(ii) = mean(W_c);
-    W_fb_var(ii) = var(W_fb);
-    W_c_var(ii) = var(W_c);
+    W_app_mean(ii) = mean(W_fb);
+    W_add_mean(ii) = mean(W_c);
+    W_app_var(ii) = var(W_fb);
+    W_add_var(ii) = var(W_c);
 
     % calculate variance of z around x after measurement
     s2_meas(ii) = mean(d_meas.^2);
@@ -87,9 +88,9 @@ end
 toc
 
 %% error calculation
-W_fb_err = sqrt(W_fb_var/K);
-W_c_err = sqrt(W_c_var/K);
-eta_err = sqrt((1./W_c_mean).^2.*W_fb_err.^2 + (W_fb_mean./W_c_mean.^2).^2.*W_c_err.^2);
+W_fb_err = sqrt(W_app_var/K);
+W_c_err = sqrt(W_add_var/K);
+eta_err = sqrt((1./W_add_mean).^2.*W_fb_err.^2 + (W_app_mean./W_add_mean.^2).^2.*W_c_err.^2);
 
 %% analytical expectations
 W_fb_ana = -((exp(-2*ts) - 1)*(s2 - 1))/2;
@@ -100,25 +101,20 @@ W_c_ana = -log(s2)/2 + log((s2 - 1)*exp(-2*ts) + 1)/2;
 figure('Position',[400,1000,560,700]);
 ax1 = axes('Position',[0.13 0.705 0.77 0.275]);
 %errorbar(nu_h_vec,W_c_mean/ts,W_c_err/ts,'bs','MarkerSize',mS,'lineWidth',lW);
-plot(nu_h_vec,W_c_mean/ts,'bs','MarkerSize',mS,'lineWidth',lW);
+plot(nu_h_vec,W_add_mean/ts,'bs','MarkerSize',mS,'lineWidth',lW);
 hold on;
-plot(nu_h_vec,W_fb_mean/ts,'ro','MarkerSize',mS,'lineWidth',lW);
+plot(nu_h_vec,W_app_mean/ts,'ro','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,ones(size(nu_h_vec))*W_c_ana/ts,'b','MarkerSize',mS,'lineWidth',lW);
-%errorbar(nu_h_vec,W_fb_mean/ts,W_fb_err/ts,'rs','MarkerSize',mS,'lineWidth',lW);
 plot(nu_h_vec,ones(size(nu_h_vec))*W_fb_ana/ts,'r','MarkerSize',mS,'lineWidth',lW);
 set(gca,'XScale','log','FontSize',fS);
 set(gca,'XTick',10.^[0,1,2,3,4,5]);
 set(gca,'XTicklabels',[]);
-%xlabel('$\nu_\mathrm{high}$','Interpreter','latex');
 ylabel('rate of work','Interpreter','latex');
-%legend({'$\left\langle w^\mathrm{c} \right\rangle/t_\mathrm{s}$',...
-%    '$\left\langle w^\mathrm{fb} \right\rangle/t_\mathrm{s}$'},...
-%    'Location','NorthWest');
-%legend boxoff 
+
 axis([min(nu_h_vec),max(nu_h_vec),-1,4.5]);
-text(1E2, 0.1 , '$\left\langle w^\mathrm{fb} \right\rangle/t_\mathrm{s}$',...
+text(1E2, 0.1 , '$\left\langle w^\mathrm{app} \right\rangle/t_\mathrm{s}$',...
     'Interpreter','latex','FontSize',fS,'Color','r');
-text(8E2, 3.9 , '$\left\langle w^\mathrm{c} \right\rangle/t_\mathrm{s}$',...
+text(8E2, 3.9 , '$\left\langle w^\mathrm{add} \right\rangle/t_\mathrm{s}$',...
     'Interpreter','latex','FontSize',fS,'Color','b');
 text(2E-1,4.5,'(a)','interpreter','latex','FontSize',fS+2);
 
@@ -141,7 +137,7 @@ text(2E-1,1,'(b)','interpreter','latex','FontSize',fS+2);
 
 % plot efficiency
 ax3 = axes('Position',[0.13 0.085 0.77 0.275]);
-errorbar(nu_h_vec,-W_fb_mean./W_c_mean,eta_err,'ks','MarkerSize',mS,'lineWidth',lW);
+errorbar(nu_h_vec,-W_app_mean./W_add_mean,eta_err,'ks','MarkerSize',mS,'lineWidth',lW);
 hold on;
 plot(nu_h_vec,-ones(size(nu_h_vec))*W_fb_ana/W_c_ana,'k','MarkerSize',mS,'lineWidth',lW);
 xlabel('$\nu_\mathrm{high}$','Interpreter','latex');
@@ -151,7 +147,7 @@ set(gca,'XTick',10.^[0,1,2,3,4,5]);
 %set(gca,'XTicklabels',[]);
 axis([min(nu_h_vec),max(nu_h_vec),0,0.28]);
 text(2E-1,0.28,'(c)','interpreter','latex','FontSize',fS+2);
-text(1E2, 0.13 , '$-\left\langle w^\mathrm{fb} \right\rangle/\left\langle w^\mathrm{c} \right\rangle$',...
+text(1E2, 0.13 , '$-\left\langle w^\mathrm{app} \right\rangle/\left\langle w^\mathrm{add} \right\rangle$',...
     'Interpreter','latex','FontSize',fS);
 text(1E1, 0.24 , '$\eta_\mathrm{inf}$',...
     'Interpreter','latex','FontSize',fS);

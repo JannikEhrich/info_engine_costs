@@ -3,13 +3,13 @@
 %(= entropy production) per time step and efficiency
 %
 % OUTPUTS:
-%  vertical figure with 4 panels plotting output work, input work, total
+%  figure with 4 panels plotting output work, input work, total
 %  work, and efficiency
 %
 % author:  JEhrich
-% version: 1.6 (2022-06-06)
-% changes: changed output figure to a 2x2 grid
-% power"
+% version: 1.7 (2022-06-13)
+% changes: changed fb work to app work and c work to add work
+
 clear
 close all
 clc
@@ -28,16 +28,16 @@ ts_vec = [1 0.3 0.01];
 s2_vec = logspace(-4,3,1E3);
 
 %% output work and information flow
-W_fb = nan(length(s2_vec),length(ts_vec));
-W_c_min = nan(length(s2_vec),length(ts_vec));
+W_app = nan(length(s2_vec),length(ts_vec));
+W_add_min = nan(length(s2_vec),length(ts_vec));
 
 for ii = 1:length(ts_vec)
     ts = ts_vec(ii);
     for jj = 1:length(s2_vec)
         s2 = s2_vec(jj);
         
-        W_fb(ii,jj) = -((exp(-2*ts) - 1)*(s2 - 1))/2;
-        W_c_min(ii,jj) = -log(s2)/2 + log(exp(2*ts) + s2 - 1)/2 - ts;
+        W_app(ii,jj) = -((exp(-2*ts) - 1)*(s2 - 1))/2;
+        W_add_min(ii,jj) = -log(s2)/2 + log(exp(2*ts) + s2 - 1)/2 - ts;
     end
 end
 
@@ -55,7 +55,7 @@ end
 semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,W_fb(ii,:)/ts_vec(ii),'LineStyle',lStyle{ii},'Color',colors(ii,:),'linewidth',lW);
+    semilogx(s2_vec,W_app(ii,:)/ts_vec(ii),'LineStyle',lStyle{ii},'Color',colors(ii,:),'linewidth',lW);
 end
 
 % add marker
@@ -66,7 +66,7 @@ W_c_min_m = -log(s2_m)/2 + log(exp(2*ts_m) + s2_m - 1)/2 - ts_m;
 plot(s2_m,W_fb_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 set(gca,'FontSize',fS);
-ylabel('$\left\langle w^\mathrm{fb}_k\right\rangle/t_s$','FontWeight','normal','Interpreter','latex');
+ylabel('$\left\langle w^\mathrm{app}_k\right\rangle/t_s$','FontWeight','normal','Interpreter','latex');
 lgd = legend({...
     ['$' num2str(ts_vec(1)) '$'],...
     ['$' num2str(ts_vec(2)) '$'],...
@@ -84,10 +84,10 @@ semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,W_c_min(ii,:)/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
+    semilogx(s2_vec,W_add_min(ii,:)/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-ylabel('$\left\langle w^\mathrm{c}_k\right\rangle_\mathrm{min}/t_s$','FontWeight','normal','Interpreter','latex');
+ylabel('$\left\langle w^\mathrm{add}_k\right\rangle_\mathrm{min}/t_s$','FontWeight','normal','Interpreter','latex');
 set(gca,'XTickLabels',[]);
 axis([1E-2,1E1,-1.3,6.4]);
 text(3.2E-3,6.4,'(b)','interpreter','latex','FontSize',fS+2);
@@ -99,7 +99,7 @@ ax3 = axes('Position',[0.07 0.1 0.41 0.405]);
 semilogx([1,1],[-10,100],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,(W_fb(ii,:)+W_c_min(ii,:))/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
+    semilogx(s2_vec,(W_app(ii,:)+W_add_min(ii,:))/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
 xlabel('$\sigma^2$','Interpreter','latex');
@@ -115,7 +115,7 @@ ax4 = axes('Position',[0.57 0.1 0.41 0.405]);
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 for ii = 1:length(ts_vec)
-    semilogx(s2_vec,-W_fb(ii,:)./W_c_min(ii,:),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW,'MarkerSize',mS);
+    semilogx(s2_vec,-W_app(ii,:)./W_add_min(ii,:),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW,'MarkerSize',mS);
 end
 set(gca,'FontSize',fS);
 xlabel('$\sigma^2$','Interpreter','latex');

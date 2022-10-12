@@ -7,8 +7,8 @@
 %  work, and efficiency
 %
 % author:  JEhrich
-% version: 1.7 (2022-06-13)
-% changes: changed fb work to app work and c work to add work
+% version: 1.8 (2022-09-28)
+% changes: changed figure to column layout
 
 clear
 close all
@@ -46,8 +46,9 @@ colors = hsv(length(ts_vec));
 lStyle{1} = '-';
 lStyle{2} = '-.';
 lStyle{3} = '--';
-figure('Position',[400,1000,900,550]);
-ax1 = axes('Position',[0.07 0.57 0.41 0.405]);
+%figure('Position',[400,1000,900,550]);
+figure('Position',[400,1000,560,900]);
+ax1 = axes('Position',[0.13 0.78 0.77 0.21]);
 for ii = 1:length(ts_vec)
     semilogx(nan,nan,'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
     hold on;
@@ -79,7 +80,7 @@ axis([1E-2,1E1,-1.3,2.5]);
 text(3.2E-3,2.5,'(a)','interpreter','latex','FontSize',fS+2);
 
 %% plot control work
-ax2 = axes('Position',[0.57 0.57 0.41 0.405]);
+ax2 = axes('Position',[0.13 0.54 0.77 0.21]);
 semilogx([1E-12,1E12],[0,0],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
@@ -95,14 +96,15 @@ text(3.2E-3,6.4,'(b)','interpreter','latex','FontSize',fS+2);
 plot(s2_m,W_c_min_m/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 %% plot total work
-ax3 = axes('Position',[0.07 0.1 0.41 0.405]);
+ax3 = axes('Position',[0.13 0.3 0.77 0.21]);
 semilogx([1,1],[-10,100],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 for ii = 1:length(ts_vec)
     semilogx(s2_vec,(W_app(ii,:)+W_add_min(ii,:))/ts_vec(ii),'Color',colors(ii,:),'LineStyle',lStyle{ii},'linewidth',lW);
 end
 set(gca,'FontSize',fS);
-xlabel('$\sigma^2$','Interpreter','latex');
+%xlabel('$\sigma^2$','Interpreter','latex');
+set(gca,'XTickLabels',[]);
 ylabel('total power','FontWeight','normal','Interpreter','latex');
 axis([1E-2,1E1,0,8]);
 text(3.2E-3,8,'(c)','interpreter','latex','FontSize',fS+2);
@@ -111,7 +113,7 @@ plot(s2_m,(W_fb_m+W_c_min_m)/ts_m,'xk','linewidth',lW,'markerSize',mS);
 
 
 %% plot efficiency
-ax4 = axes('Position',[0.57 0.1 0.41 0.405]);
+ax4 = axes('Position',[0.13 0.06 0.77 0.21]);
 semilogx([1,1],[-10,10],'--','color',[1,1,1]*0.5,'linewidth',1);
 hold on;
 for ii = 1:length(ts_vec)
